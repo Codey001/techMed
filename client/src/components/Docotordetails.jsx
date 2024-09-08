@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 
 function DoctorDetails({ doctorId }) {
     const [doctor, setDoctor] = useState(null);
@@ -56,5 +57,9 @@ function DoctorDetails({ doctorId }) {
         </div>
     );
 }
+DoctorDetails.propTypes = {
+    doctorId: PropTypes.string.isRequired,
+};
+
 
 export default DoctorDetails;
