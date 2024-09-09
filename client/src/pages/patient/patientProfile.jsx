@@ -1,6 +1,6 @@
 import PatientDetails from "@/components/patientDetails"
 
-const patientDashboard = () => {
+const patientProfile = () => {
     return (
         <div>
             <PatientDetails />
@@ -8,4 +8,4 @@ const patientDashboard = () => {
     )
 }
 
-export default patientDashboard
+export default patientProfile
