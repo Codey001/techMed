@@ -18,27 +18,52 @@ function PatientDetails({ patientId }) {
             familyMedicalHistory: ''
         }
     });
+    // Mock data to simulate fetching patient details
+    const mockPatientData = {
+        id: patientId,
+        firstName: 'John',
+        lastName: 'Doe',
+        gender: 'Male',
+        healthInfo: {
+            pastMedicalConditions: 'Hypertension',
+            currentMedications: 'Aspirin',
+            allergies: 'None',
+            familyMedicalHistory: 'Heart Disease'
+        }
+    };
 
     useEffect(() => {
         const fetchPatientDetails = async () => {
+            // try {
+            //     const response = await fetch(`https://example.com/api/patient/${patientId}`);
+            //     if (!response.ok) {
+            //         throw new Error('Network response was not ok');
+            //     }
+            //     const data = await response.json();
+            //     setPatient(data);
+            //     setOriginalPatient(data);
+            //     setFormData({
+            //         firstName: data.firstName,
+            //         lastName: data.lastName,
+            //         gender: data.gender,
+            //         healthInfo: {
+            //             pastMedicalConditions: data.healthInfo.pastMedicalConditions,
+            //             currentMedications: data.healthInfo.currentMedications,
+            //             allergies: data.healthInfo.allergies,
+            //             familyMedicalHistory: data.healthInfo.familyMedicalHistory
+            //         }
+            //     });
+            // }
             try {
-                const response = await fetch(`https://example.com/api/patient/${patientId}`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                setPatient(data);
-                setOriginalPatient(data);
+                // Simulating an API call with a delay
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                setPatient(mockPatientData);
+                setOriginalPatient(mockPatientData);
                 setFormData({
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                    gender: data.gender,
-                    healthInfo: {
-                        pastMedicalConditions: data.healthInfo.pastMedicalConditions,
-                        currentMedications: data.healthInfo.currentMedications,
-                        allergies: data.healthInfo.allergies,
-                        familyMedicalHistory: data.healthInfo.familyMedicalHistory
-                    }
+                    firstName: mockPatientData.firstName,
+                    lastName: mockPatientData.lastName,
+                    gender: mockPatientData.gender,
+                    healthInfo: { ...mockPatientData.healthInfo }
                 });
             } catch (error) {
                 setError(error.message);

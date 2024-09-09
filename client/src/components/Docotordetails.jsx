@@ -16,19 +16,41 @@ function DoctorDetails({ doctorId }) {
 
     useEffect(() => {
         const fetchDoctorDetails = async () => {
+            // try {
+            //     const response = await fetch(`https://example.com/api/doctor/${doctorId}`);
+            //     if (!response.ok) {
+            //         throw new Error('Network response was not ok');
+            //     }
+            //     const data = await response.json();
+            //     setDoctor(data);
+            //     setOriginalDoctor(data); // Store the original doctor data
+            //     setFormData({
+            //         name: data.name,
+            //         age: data.age,
+            //         gender: data.gender,
+            //         specialization: data.specialization,
+            //     });
+            // } 
+            // Simulate API delay
             try {
-                const response = await fetch(`https://example.com/api/doctor/${doctorId}`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                setDoctor(data);
-                setOriginalDoctor(data); // Store the original doctor data
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+
+                // Mock data
+                const mockData = {
+                    id: doctorId,
+                    name: 'Dr. John Doe',
+                    age: 45,
+                    gender: 'Male',
+                    specialization: 'Cardiology',
+                };
+
+                setDoctor(mockData);
+                setOriginalDoctor(mockData); // Store the original doctor data
                 setFormData({
-                    name: data.name,
-                    age: data.age,
-                    gender: data.gender,
-                    specialization: data.specialization,
+                    name: mockData.name,
+                    age: mockData.age,
+                    gender: mockData.gender,
+                    specialization: mockData.specialization,
                 });
             } catch (error) {
                 setError(error.message);
