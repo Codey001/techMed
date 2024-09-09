@@ -35,6 +35,21 @@ const consultationSchema = new mongoose.Schema({
     enum: ['Pending', 'Confirmed', 'Completed'],  
     default: 'Pending'
   },
+  //meeting url
+  consultationUrl: {
+    type: String
+  },
+  //payment id
+  transactionId: {
+    type: String,
+    required: true
+  },
+
+
+
+
+
+
   createdAt: {
     type: Date,
     default: Date.now   

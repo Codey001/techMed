@@ -19,14 +19,11 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use(cors());
 
-app.get('/', (req,res) => {
-    res.status(200).send("App is running");
-})
-
+//TODO : PROTECT THE ROUTES
 
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", updateProfileRoute);
-// app.use("/api/consultation",);
+app.use("/api/consultation",);
 // app.use("/api/getPatientHistory");
 
 
