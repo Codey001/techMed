@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import DailyIframe from '@daily-co/daily-js';
-import { createClient } from '@deepgram/sdk';
+import { createClient, LiveTranscriptionEvents } from '@deepgram/sdk';
 
 const DailyDeepgram = () => {
   const [isMeetingJoined, setIsMeetingJoined] = useState(false);
@@ -16,33 +16,54 @@ const DailyDeepgram = () => {
   // Handle joining the meeting
   const joinMeeting = () => {
     // Initialize Daily call frame
+    setIsMeetingJoined(true); // Update state to show that meeting is joined
+    
     callFrame.current = DailyIframe.createFrame({
       iframeStyle: {
         position: 'absolute',
         width: '100%',
-        height: '100%',
+        height: '50%',
         border: '0',
+        zIndex: 1, // Set z-index lower than the buttons
       },
       showLeaveButton: true,
     });
 
     // Attach the call frame to the video container
     callFrame.current.join({ url: dailyRoomURL });
-    videoRef.current.appendChild(callFrame.current.iframe);
 
+    callFrame.current.on('track-started', (event) => {
+        if (event.track.kind === 'audio') {
+          const audioTrack = event.track;
+          console.log('Audio track started', audioTrack);
+          // Send the audio stream to your real-time transcription service
+      // Set up MediaStream from the audio track
+      const mediaStream = new MediaStream([audioTrack]);
+
+      // Set up MediaRecorder to capture audio
+      mediaRecorderRef.current = new MediaRecorder(mediaStream);
+
+
+
+        }
+      });
+
+
+
+      
     // Set up listeners
     callFrame.current.on('joined-meeting', handleJoinedMeeting);
 
-    setIsMeetingJoined(true); // Update state to show that meeting is joined
   };
 
   // Handle joining the Daily meeting and capture audio stream
-  const handleJoinedMeeting = () => {
+  const handleJoinedMeeting = async () => {
     console.log('Joined the Daily meeting');
-    const stream = callFrame.current.localAudio();
 
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    console.log("stresmiting audio stream", stream)
     if (stream) {
-      mediaRecorderRef.current = stream; // Store the audio stream reference
+      mediaRecorderRef.current = new MediaRecorder(stream);
     }
   };
 
@@ -57,49 +78,58 @@ const DailyDeepgram = () => {
   };
 
   // Start transcription by streaming audio to Deepgram
-  const startTranscription = () => {
-    const deepgramSocket = new WebSocket('wss://api.deepgram.com/v1/listen', [], {
-      headers: {
-        Authorization: `Token ${deepgramApiKey}`,
-      },
+  const startTranscription = async () => {
+    console.log("TRANSCRIPTION STARTED")
+    const deepgram = createClient(deepgramApiKey);
+
+    // Create a live transcription connection
+    const connection = deepgram.listen.live({
+      model: 'nova-2',
+      language: 'en-US',
+      smart_format: true,
     });
+    console.log("connection creted")
 
-    deepgramSocketRef.current = deepgramSocket;
+    // Listen for live transcription events
 
-    deepgramSocket.onopen = () => {
-      console.log('Connected to Deepgram WebSocket for transcription');
+    //EXTRACT AUDIO DATA FROM STREAM
+    
 
-      // Create MediaRecorder to capture audio from the stored audio stream
-      const mediaRecorder = new MediaRecorder(mediaRecorderRef.current);
 
-      mediaRecorder.ondataavailable = (event) => {
+
+    connection.on(LiveTranscriptionEvents.Open, () => {
+      console.log('Deepgram connection opened.');
+
+      // Capture audio and send to Deepgram
+      mediaRecorderRef.current.ondataavailable = async (event) => {
         if (event.data.size > 0) {
-          // Send audio chunks to Deepgram WebSocket
-          deepgramSocket.send(event.data);
+          connection.send(event.data);
         }
       };
 
-      mediaRecorder.start(250); // Send audio chunks every 250ms
-      mediaRecorderRef.current = mediaRecorder; // Save reference to media recorder
-    };
+      mediaRecorderRef.current.start(250); // Send audio every 250ms
+    });
 
-    // Listen for transcription results
-    deepgramSocket.onmessage = (message) => {
-      const data = JSON.parse(message.data);
+    console.log("LISTENING FOR TRANSCRITPITON")
+    // Listen for transcriptions
+    connection.on(LiveTranscriptionEvents.Transcript, (data) => {
+        console.log("data ",data)
       const transcript = data.channel.alternatives[0].transcript;
-
+      console.log('Received transcription:', transcript);
       if (transcript) {
         setTranscription((prev) => `${prev}\n${transcript}`);
       }
-    };
+    });
 
-    deepgramSocket.onerror = (error) => {
-      console.error('Deepgram WebSocket error:', error);
-    };
+    connection.on(LiveTranscriptionEvents.Error, (err) => {
+      console.error('Deepgram WebSocket error:', err);
+    });
 
-    deepgramSocket.onclose = () => {
-      console.log('Deepgram WebSocket closed');
-    };
+    connection.on(LiveTranscriptionEvents.Close, () => {
+      console.log('Deepgram connection closed.');
+    });
+
+    deepgramSocketRef.current = connection;
   };
 
   // Stop transcription and close WebSocket connection
@@ -136,13 +166,12 @@ const DailyDeepgram = () => {
           {/* Video container */}
           <div
             ref={videoRef}
-            style={{ width: '800px', height: '600px', border: '1px solid black', position: 'relative' }}
+            style={{ position: 'relative', zIndex: 1 }}
           />
 
           {/* Transcription overlay */}
           {isTranscribing && (
             <div style={{
-              position: 'absolute',
               top: '10px',
               left: '10px',
               width: '780px',
@@ -152,6 +181,7 @@ const DailyDeepgram = () => {
               padding: '10px',
               overflowY: 'auto',
               borderRadius: '8px',
+              zIndex: 2, // Ensure transcription is above the iframe
             }}>
               <h4>Live Transcription:</h4>
               <pre style={{ whiteSpace: 'pre-wrap' }}>{transcription}</pre>
@@ -171,6 +201,7 @@ const DailyDeepgram = () => {
               border: 'none',
               borderRadius: '5px',
               cursor: 'pointer',
+              zIndex: 2, // Ensure button is above the iframe
             }}
           >
             {isTranscribing ? 'Stop Transcription' : 'Start Transcription'}
