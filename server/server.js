@@ -24,8 +24,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //TODO : PROTECT THE ROUTES
 
 app.use("/api/auth", authRoutes);
+
 app.use("/api/profile", updateProfileRoute);
 app.use("/api/specialization", specializationRoute)
+
 app.use("/api/consultation",consultationRoute);
 
 app.use("/api/payment", paymentRoute);

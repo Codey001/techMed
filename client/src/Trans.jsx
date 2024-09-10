@@ -10,8 +10,14 @@ const DailyDeepgram = () => {
   const callFrame = useRef(null);
   const deepgramSocketRef = useRef(null);
   const mediaRecorderRef = useRef(null);
-  const dailyRoomURL = "https://project1.daily.co/EQJhN7cHN0Z9YSSslKjm"; // Replace with your Daily room URL
-  const deepgramApiKey = "b4cc6486951a12492673090971ed4736395b59de"; // Replace with your Deepgram API Key
+
+  //fetch meeting url
+
+  // const dailyRoomURL = "https://project1.daily.co/EQJhN7cHN0Z9YSSslKjm"; // Replace with your Daily room URL
+
+  // const dailyRoomUrl = await meetingUrl();
+
+  const deepgramApiKey = import.meta.env.VITE_DEEPGRAM_API; // Replace with your Deepgram API Key
 
   // Handle joining the meeting
   const joinMeeting = () => {
@@ -131,7 +137,7 @@ const DailyDeepgram = () => {
       mediaRecorderRef.current.stop();
     }
 
-    
+
 
     // if (deepgramSocketRef.current) {
     //   deepgramSocketRef.current.close();

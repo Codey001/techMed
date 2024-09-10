@@ -50,14 +50,13 @@ export class AuthService {
   async logOut() {
     try {
 
-      const account = await this.account.deleteSessions();
-      if (account) {
-        return account;
-      } else {
-        console.log("APPWRITE ERROR IN GETTING LOGOUT");
-      }
+      const url = `http://localhost:8080/api/auth/logout`;
+      const response = await axios.post(url);
+  
+        return response;
+
     } catch (error) {
-      console.log("Appwrite service error :: logout :: error", error);
+      console.log("Error in logout", error);
     }
   }
 }

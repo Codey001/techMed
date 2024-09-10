@@ -7,7 +7,6 @@ import BookingConsultation from './pages/patient/Bookingconsultation';
 import PatientProfile from './pages/patient/Patientprofile';
 import DoctorProfile from './pages/doctor/Doctorprofile';
 import DoctorApproval from './pages/doctor/Doctorapproval';
-import { ToastContainer } from "react-toastify";
 import Trans from "./Trans"
 
 import Login from "./components/authComponents/Login"
@@ -17,18 +16,7 @@ import Signup from "./components/authComponents/Signup"
 function App() {
   return (
     <div>
-      <ToastContainer
-        position="top-right"
-        autoClose={1000}
-        hideProgressBar
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-      />
+
 
       <Routes>
         <Route path="/" element={<Layout />}>

@@ -23,7 +23,7 @@ const Signup = () => {
     try {
       const userData = await authService.createAccount(data);
       if (userData) {
-        dispatch(authLogin(userData));
+        dispatch(authLogin(userData.data));
         toast.success("SIGNUP SUCCESSFUL");
         navigate("/");
       }
