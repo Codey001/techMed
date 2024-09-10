@@ -1,8 +1,10 @@
-
+import AppointmentModal from "@/components/Appointmentmodal"
 
 const DoctorApproval = () => {
     return (
-        <div>doctorApproval</div>
+        <div>
+            <AppointmentModal userRole="doctor" />
+        </div>
     )
 }
 
