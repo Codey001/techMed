@@ -36,7 +36,7 @@ const consultationSchema = new mongoose.Schema({
     default: 'Pending'
   },
   //meeting url
-  consultationUrl: {
+  meetingRoomUrl: {
     type: String
   },
   //payment id
@@ -44,11 +44,9 @@ const consultationSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-
-
-
-
-
+  specialty: {
+    type: String
+  },
 
   createdAt: {
     type: Date,

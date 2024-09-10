@@ -3,6 +3,7 @@ import Doctor from "../models/doctor.model.js"
 import Patient from "../models/patient.model.js"
 
 import { decrypt } from "../config/encryption.js";
+import Consultation from "../models/consultation.model.js";
 
 const updateProfile = async(req,res) =>{
     const {type} = req.body;
@@ -78,4 +79,34 @@ const getProfile = async (req, res) => {
     }
 }
 
-export {updateProfile, getProfile}
+const patientInfo = async (req,res) => {
+    try {
+        const {doctorId, consultationId} = req.body;
+        
+        const consultation = await Consultation.findById({_id: consultationId});
+        if(!consultation){
+            return res.status(404).json({message: "Consultation not found"});
+        }
+
+        if(consultation.doctor !== doctorId){
+            return res.status(403).json({message: "Unauthorized access"});
+        }
+
+        const patient = await Patient.findById({_id: consultation.patient});
+        if(!patient){
+            return res.status(404).json({message: "Patient not found"});
+        }
+
+        const decryptedPatient = patient.toObject({ getters: true });
+        return res.status(200).json(decryptedPatient);
+
+    } catch (error) {
+        console.log("Error fetching patient info", error.message);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+    
+
+}
+
+
+export {updateProfile, getProfile, patientInfo}

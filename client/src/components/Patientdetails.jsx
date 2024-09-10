@@ -7,22 +7,63 @@ function PatientDetails({ patientId }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState({ name: 'aman', age: '20', gender: 'M' });
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        gender: '',
+        healthInfo: {
+            pastMedicalConditions: '',
+            currentMedications: '',
+            allergies: '',
+            familyMedicalHistory: ''
+        }
+    });
+    // Mock data to simulate fetching patient details
+    const mockPatientData = {
+        id: patientId,
+        firstName: 'John',
+        lastName: 'Doe',
+        gender: 'Male',
+        healthInfo: {
+            pastMedicalConditions: 'Hypertension',
+            currentMedications: 'Aspirin',
+            allergies: 'None',
+            familyMedicalHistory: 'Heart Disease'
+        }
+    };
 
     useEffect(() => {
         const fetchPatientDetails = async () => {
+            // try {
+            //     const response = await fetch(`https://example.com/api/patient/${patientId}`);
+            //     if (!response.ok) {
+            //         throw new Error('Network response was not ok');
+            //     }
+            //     const data = await response.json();
+            //     setPatient(data);
+            //     setOriginalPatient(data);
+            //     setFormData({
+            //         firstName: data.firstName,
+            //         lastName: data.lastName,
+            //         gender: data.gender,
+            //         healthInfo: {
+            //             pastMedicalConditions: data.healthInfo.pastMedicalConditions,
+            //             currentMedications: data.healthInfo.currentMedications,
+            //             allergies: data.healthInfo.allergies,
+            //             familyMedicalHistory: data.healthInfo.familyMedicalHistory
+            //         }
+            //     });
+            // }
             try {
-                const response = await fetch(`https://example.com/api/patient/${patientId}`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                setPatient(data);
-                setOriginalPatient(data); // Store the original patient data
+                // Simulating an API call with a delay
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                setPatient(mockPatientData);
+                setOriginalPatient(mockPatientData);
                 setFormData({
-                    name: data.name,
-                    age: data.age,
-                    gender: data.gender
+                    firstName: mockPatientData.firstName,
+                    lastName: mockPatientData.lastName,
+                    gender: mockPatientData.gender,
+                    healthInfo: { ...mockPatientData.healthInfo }
                 });
             } catch (error) {
                 setError(error.message);
@@ -41,18 +82,30 @@ function PatientDetails({ patientId }) {
     const handleCancelClick = () => {
         setIsEditing(false);
         setFormData({
-            name: originalPatient.name,
-            age: originalPatient.age,
-            gender: originalPatient.gender
+            firstName: originalPatient.firstName,
+            lastName: originalPatient.lastName,
+            gender: originalPatient.gender,
+            healthInfo: { ...originalPatient.healthInfo }
         });
     };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
+        if (name.includes("healthInfo.")) {
+            const field = name.split(".")[1];
+            setFormData({
+                ...formData,
+                healthInfo: {
+                    ...formData.healthInfo,
+                    [field]: value
+                }
+            });
+        } else {
+            setFormData({
+                ...formData,
+                [name]: value
+            });
+        }
     };
 
     const handleSaveClick = async () => {
@@ -86,21 +139,21 @@ function PatientDetails({ patientId }) {
                 {isEditing ? (
                     <>
                         <div className="flex flex-col sm:flex-row items-start sm:items-center sm:space-x-4">
-                            <div className="text-lg sm:text-xl font-semibold">Name:</div>
+                            <div className="text-lg sm:text-xl font-semibold">First Name:</div>
                             <input
                                 type="text"
-                                name="name"
-                                value={formData.name}
+                                name="firstName"
+                                value={formData.firstName}
                                 onChange={handleChange}
                                 className="border border-gray-300 p-2 rounded-md"
                             />
                         </div>
                         <div className="flex flex-col sm:flex-row items-start sm:items-center sm:space-x-4">
-                            <div className="text-lg sm:text-xl font-semibold">Age:</div>
+                            <div className="text-lg sm:text-xl font-semibold">Last Name:</div>
                             <input
-                                type="number"
-                                name="age"
-                                value={formData.age}
+                                type="text"
+                                name="lastName"
+                                value={formData.lastName}
                                 onChange={handleChange}
                                 className="border border-gray-300 p-2 rounded-md"
                             />
@@ -118,6 +171,62 @@ function PatientDetails({ patientId }) {
                                 <option value="Other">Other</option>
                             </select>
                         </div>
+
+                        {/* Health Info Section */}
+                        <div className="mt-4">
+                            <h2 className="text-xl font-semibold mb-2">Health Information</h2>
+                            <div className="space-y-2">
+                                <div>
+                                    <label htmlFor="pastMedicalConditions" className="font-medium">Past Medical Conditions:</label>
+                                    <input
+                                        type="text"
+                                        name="healthInfo.pastMedicalConditions"
+                                        value={formData.healthInfo.pastMedicalConditions}
+                                        onChange={handleChange}
+                                        disabled={!isEditing}
+                                        className={`border border-gray-300 p-2 rounded-md ${isEditing ? "" : "bg-gray-100"
+                                            }`}
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="currentMedications" className="font-medium">Current Medications:</label>
+                                    <input
+                                        type="text"
+                                        name="healthInfo.currentMedications"
+                                        value={formData.healthInfo.currentMedications}
+                                        onChange={handleChange}
+                                        disabled={!isEditing}
+                                        className={`border border-gray-300 p-2 rounded-md ${isEditing ? "" : "bg-gray-100"
+                                            }`}
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor='allergies' className="font-medium">Allergies:</label>
+                                    <input
+                                        type="text"
+                                        name="healthInfo.allergies"
+                                        value={formData.healthInfo.allergies}
+                                        onChange={handleChange}
+                                        disabled={!isEditing}
+                                        className={`border border-gray-300 p-2 rounded-md ${isEditing ? "" : "bg-gray-100"
+                                            }`}
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor='familyMedicalHistory' className="font-medium">Family Medical History:</label>
+                                    <input
+                                        type="text"
+                                        name="healthInfo.familyMedicalHistory"
+                                        value={formData.healthInfo.familyMedicalHistory}
+                                        onChange={handleChange}
+                                        disabled={!isEditing}
+                                        className={`border border-gray-300 p-2 rounded-md ${isEditing ? "" : "bg-gray-100"
+                                            }`}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
                         <div className="flex justify-center space-x-4 mt-4">
                             <button
                                 onClick={handleSaveClick}
@@ -136,18 +245,41 @@ function PatientDetails({ patientId }) {
                 ) : (
                     <>
                         <div className="flex flex-col sm:flex-row items-start sm:items-center sm:space-x-4">
-                            <div className="text-lg sm:text-xl font-semibold">Name:</div>
-                            <div className="text-base sm:text-lg">{patient.name}</div>
+                            <div className="text-lg sm:text-xl font-semibold">First Name:</div>
+                            <div className="text-base sm:text-lg">{patient.firstName}</div>
                         </div>
                         <div className="flex flex-col sm:flex-row items-start sm:items-center sm:space-x-4">
-                            <div className="text-lg sm:text-xl font-semibold">Age:</div>
-                            <div className="text-base sm:text-lg">{patient.age}</div>
+                            <div className="text-lg sm:text-xl font-semibold">Last Name:</div>
+                            <div className="text-base sm:text-lg">{patient.lastName}</div>
                         </div>
                         <div className="flex flex-col sm:flex-row items-start sm:items-center sm:space-x-4">
                             <div className="text-lg sm:text-xl font-semibold">Gender:</div>
                             <div className="text-base sm:text-lg">{patient.gender}</div>
                         </div>
-                        {/* Add more fields as needed */}
+
+                        {/* Health Info Section */}
+                        <div className="mt-4">
+                            <h2 className="text-xl font-semibold mb-2">Health Information</h2>
+                            <div className="space-y-2">
+                                <div>
+                                    <label htmlFor='pastMedicalConditions' className="font-medium">Past Medical Conditions:</label>
+                                    <div className="text-base sm:text-lg">{patient.healthInfo.pastMedicalConditions}</div>
+                                </div>
+                                <div>
+                                    <label htmlFor='currentMedications' className="font-medium">Current Medications:</label>
+                                    <div className="text-base sm:text-lg">{patient.healthInfo.currentMedications}</div>
+                                </div>
+                                <div>
+                                    <label htmlFor='allergies' className="font-medium">Allergies:</label>
+                                    <div className="text-base sm:text-lg">{patient.healthInfo.allergies}</div>
+                                </div>
+                                <div>
+                                    <label htmlFor='familyMedicalHistory' className="font-medium">Family Medical History:</label>
+                                    <div className="text-base sm:text-lg">{patient.healthInfo.familyMedicalHistory}</div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div className="flex justify-center mt-4">
                             <button
                                 onClick={handleEditClick}
@@ -165,6 +297,6 @@ function PatientDetails({ patientId }) {
 
 PatientDetails.propTypes = {
     patientId: PropTypes.string.isRequired,
-}
+};
 
 export default PatientDetails;

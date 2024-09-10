@@ -17,11 +17,24 @@
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^6.0.2",
     "@mui/material": "^6.0.2",
+<<<<<<< HEAD
     "fetch": "^1.1.0",
+=======
+    "@radix-ui/react-icons": "^1.3.0",
+    "@radix-ui/react-slot": "^1.1.0",
+    "axios": "^1.7.7",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.439.0",
+>>>>>>> b8d2637189c51a1e32b8d682ae469e2eb2220a74
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "recoil": "^0.7.7"
+    "react-router-dom": "^6.26.1",
+    "react-square-web-payments-sdk": "^3.2.1",
+    "recoil": "^0.7.7",
+    "tailwind-merge": "^2.5.2",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
