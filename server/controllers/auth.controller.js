@@ -6,11 +6,11 @@ import generateTokenAndSetCookie from "../utils/generateToken.js";
 
 const signup = async (req, res) => {
   try {
-    const { type, email, password, confirmPassword } = req.body;
-    console.log([type, email, password, confirmPassword])
+    const { type,name, email, password, confirmPassword } = req.body;
+    console.log([type,name, email, password, confirmPassword])
 
     // Validate inputs
-    if (!email || !password || !confirmPassword) {
+    if (!email || !password || !confirmPassword, !name) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
@@ -39,9 +39,9 @@ const signup = async (req, res) => {
     // Create new user based on the type
     let newUser;
     if (type === "Patient") {
-      newUser = new Patient({ email, passwordHash: hashedPassword });
+      newUser = new Patient({name, email, passwordHash: hashedPassword });
     } else if (type === "Doctor") {
-      newUser = new Doctor({ email, passwordHash: hashedPassword });
+      newUser = new Doctor({name, email, passwordHash: hashedPassword });
     }else{
       return res.status(400).json({ error: "Invalid user type" });
     }

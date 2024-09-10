@@ -13,7 +13,7 @@ const consultationSchema = new mongoose.Schema({
   timestamp: {
     type: Date, // Combined Date and Time as a single timestamp
     required: true,
-    default: Date.now,  // Default to the current date and time
+
   },
   symptoms: {
     type: String,   // Summary of symptoms reported by the patient
@@ -52,7 +52,8 @@ const consultationSchema = new mongoose.Schema({
     type: Date,
     default: Date.now   
   }
-});
+  
+}, { timestamps: true });
 
 const Consultation = mongoose.model("Consultation", consultationSchema);
 

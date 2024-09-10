@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout';
 // import Signup from './pages/signup/Signup';
 import Homepage from './components/Homepage';
@@ -7,12 +7,37 @@ import BookingConsultation from './pages/patient/Bookingconsultation';
 import PatientProfile from './pages/patient/Patientprofile';
 import DoctorProfile from './pages/doctor/Doctorprofile';
 import DoctorApproval from './pages/doctor/Doctorapproval';
+import { ToastContainer } from "react-toastify";
+import Trans from "./Trans"
+
+import Login from "./components/authComponents/Login"
+import Signup from "./components/authComponents/Signup"
+
 
 function App() {
   return (
-    <Router>
+    <div>
+      <ToastContainer
+        position="top-right"
+        autoClose={1000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
+
       <Routes>
         <Route path="/" element={<Layout />}>
+
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup/>}/>
+          <Route path="/meeting" element={<Trans/>}/>
+
+
           {/* <Route element={<Signup />} index /> */}
           <Route index element={<Homepage />} />
           <Route element={<Appointments />} path="/appointments" />
@@ -22,7 +47,9 @@ function App() {
           <Route element={<DoctorApproval />} path="/doctor-approval" />
         </Route>
       </Routes>
-    </Router>
+
+    </div>
+
   );
 }
 

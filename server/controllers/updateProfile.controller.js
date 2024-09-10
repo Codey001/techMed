@@ -8,7 +8,7 @@ import Consultation from "../models/consultation.model.js";
 const updateProfile = async(req,res) =>{
     const {type} = req.body;
     if(type === "Patient"){
-        const {id, firstName, lastName, gender, healthInfo} = req.body;
+        const {id, gender, healthInfo} = req.body;
         if(!id){
             return res.status(400).json({message: "User not found"});
         }
@@ -26,7 +26,7 @@ const updateProfile = async(req,res) =>{
         return res.status(200).json({message: "Patient profile updated successfully"});
     }
     else if(type === "Doctor"){
-        const {id, firstName, lastName, specialization} = req.body;
+        const {id, specialization} = req.body;
         if(!id){
             return res.status(400).json({message: "User not found"});
         }

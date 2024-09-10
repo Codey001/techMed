@@ -3,12 +3,10 @@ import {encrypt, decrypt} from '../config/encryption.js';
 
 
 const patientSchema = new mongoose.Schema({
-    firstName: {
-        type: String,
-    },
-    lastName: {
-        type: String,
-    },
+  name:{
+    type: String,
+    required: true,
+  },
     email: {
         type: String,
         required: true,

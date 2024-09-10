@@ -6,11 +6,11 @@ const Homepage = () => {
     <div className="homepage">
 
       <div className="main-content">
-        <div className="images">
+        {/* <div className="images">
           <img src="image1.jpg" alt="Doctor and child" className="img-box" />
           <img src="image2.jpg" alt="Doctor writing" className="img-box" />
           <img src="image3.jpg" alt="Smiling doctor" className="img-box large" />
-        </div>
+        </div> */}
         
         <div className="text-content">
           <h1>Bridging Health with Technology, Anywhere, Anytime.</h1>

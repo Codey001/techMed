@@ -89,7 +89,7 @@ async function deleteRoomAPI(roomUrl) {
     }
 }
 
-async function createRoom(req,res){
+async function joinMeeting(req,res){
 
     try {
         const {userId, consultationId} = req.body;
@@ -100,6 +100,11 @@ async function createRoom(req,res){
         }
         if(userId === consultation.patient || userId===consultation.doctor){
             //CREATE ROOM
+
+            //check if the meeting exists already
+            if(consultation.meetingRoomUrl != null){
+                return res.status(200).json({message: "Meeting already exists", roomInfo: consultation.meetingRoomUrl})
+            }
 
             try {
                 const roomInfo = await createRoomAPI();
@@ -225,5 +230,29 @@ async function consultationDetails(req,res){
     }
 }
 
+async function rescheduleConsultation(req,res){
+    try {
+        const {type, patientId,updatedTime, consultationId} = req.body;
 
-export {createConsultation,updateConsultationDetails,createRoom,assignDoctor, patientConsultations,doctorConsultations, consultationDetails}
+        const consultation = await Consultation.findById({_id: consultationId});
+        
+        if(!consultation){
+            return res.status(404).json({message: "No consultations found"});
+        }
+
+        if(consultation.patient != patientId){
+            return res.status(403).json({message: "User is not authorized to reschedule consultation"});
+        }
+
+        consultation.timestamp = updatedTime;
+        await consultation.save();
+
+        res.status(200).json({message: "Consultation rescheduled successfully", consultation: consultation})
+
+    } catch (error) {
+        console.error("Error rescheduling consultation:", error.message);
+        res.status(500).json({message: "Internal server error"});
+    }
+}
+
+export {createConsultation,updateConsultationDetails,joinMeeting,assignDoctor, patientConsultations,doctorConsultations, consultationDetails, rescheduleConsultation}
