@@ -1,4 +1,7 @@
+// BookingComponent.js
 import { useState } from 'react';
+import { PaymentForm, CreditCard } from 'react-square-web-payments-sdk';
+import axios from 'axios';
 
 const specialties = [
     { name: 'Cardiology', fee: 100 },
@@ -11,24 +14,50 @@ const Booking = () => {
     const [patientName, setPatientName] = useState('');
     const [symptoms, setSymptoms] = useState('');
     const [selectedSpecialty, setSelectedSpecialty] = useState(specialties[0]);
+    const [paymentStatus, setPaymentStatus] = useState('');
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        // Handle form submission logic here
-        console.log({
-            patientName,
-            symptoms,
-            medicalSpecialty: selectedSpecialty.name,
-            fees: selectedSpecialty.fee
-        });
+    const handlePaymentFormSubmit = async (token, buyer) => {
+        try {
+
+
+            setPaymentStatus('Processing payment...');
+
+            // Update this URL to match your server's address and port
+            const response = await axios.post('http://localhost:8080/api/process-payment', {
+                sourceId: token.token,
+                amount: selectedSpecialty.fee,
+                patientName,
+                symptoms,
+                specialty: selectedSpecialty.name
+            });
+
+            if (response.data.success) {
+                setPaymentStatus('Payment successful! Booking confirmed.');
+            } else {
+                setPaymentStatus(`Payment failed: ${response.data.error}`);
+            }
+        }
+        catch (error) {
+            console.error('Payment error:', error);
+            if (error.response) {
+                console.error('Error data:', error.response.data);
+                console.error('Error status:', error.response.status);
+                console.error('Error headers:', error.response.headers);
+            } else if (error.request) {
+                console.error('Error request:', error.request);
+            } else {
+                console.error('Error message:', error.message);
+            }
+            setPaymentStatus(`Payment failed: ${error.message}`);
+        }
     };
 
     return (
-        <div className="max-w-lg mx-auto p-4 bg-white shadow-md rounded-lg mt-10">
-            <h1 className="text-2xl font-bold mb-4 text-center">Book a Consultation</h1>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                    <label htmlFor="patientName" className="block text-lg font-semibold">Patient Name:</label>
+        <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-xl">
+            <h2 className="text-2xl font-bold mb-6 text-center">Book a Consultation</h2>
+            <form>
+                <div className="mb-4">
+                    <label htmlFor="patientName" className="block text-lg font-semibold mb-2">Patient Name:</label>
                     <input
                         type="text"
                         id="patientName"
@@ -38,8 +67,8 @@ const Booking = () => {
                         required
                     />
                 </div>
-                <div>
-                    <label htmlFor="symptoms" className="block text-lg font-semibold">Symptoms:</label>
+                <div className="mb-4">
+                    <label htmlFor="symptoms" className="block text-lg font-semibold mb-2">Symptoms:</label>
                     <textarea
                         id="symptoms"
                         value={symptoms}
@@ -49,8 +78,8 @@ const Booking = () => {
                         required
                     />
                 </div>
-                <div>
-                    <label htmlFor="specialty" className="block text-lg font-semibold">Medical Specialty:</label>
+                <div className="mb-4">
+                    <label htmlFor="specialty" className="block text-lg font-semibold mb-2">Medical Specialty:</label>
                     <select
                         id="specialty"
                         value={selectedSpecialty.name}
@@ -68,8 +97,8 @@ const Booking = () => {
                         ))}
                     </select>
                 </div>
-                <div>
-                    <label className="block text-lg font-semibold">Fees:</label>
+                <div className="mb-4">
+                    <label className="block text-lg font-semibold mb-2">Fees:</label>
                     <input
                         type="text"
                         value={`$${selectedSpecialty.fee}`}
@@ -77,20 +106,32 @@ const Booking = () => {
                         className="border border-gray-300 p-2 rounded-md w-full bg-gray-100"
                     />
                 </div>
-                <div className="flex justify-center mt-4">
-                    <button
-                        type="submit"
-                        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                <div className="mb-4">
+                    <label className="block text-lg font-semibold mb-2">Payment:</label>
+                    <PaymentForm
+                        applicationId="sandbox-sq0idb-Nxa48IhcN7s_3IgTqUJquQ"
+                        locationId="LMHGQK3C3VDKZ"
+                        cardTokenizeResponseReceived={handlePaymentFormSubmit}
+                        createPaymentRequest={() => ({
+                            countryCode: "US",
+                            currencyCode: "USD",
+                            total: {
+                                amount: selectedSpecialty.fee.toString(),
+                                label: "Total",
+                            },
+                        })}
                     >
-                        Submit
-                    </button>
+                        <CreditCard />
+                    </PaymentForm>
                 </div>
+                {paymentStatus && (
+                    <div className="mt-4 text-center font-semibold">
+                        {paymentStatus}
+                    </div>
+                )}
             </form>
         </div>
     );
 };
-
-
-
 
 export default Booking;
