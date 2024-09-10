@@ -1,11 +1,18 @@
-import AppointmentModal from "@/components/Appointmentmodal"
+import React, { useState } from 'react';
+import AppointmentModal from '../../components/AppointmentModal';
 
 const DoctorApproval = () => {
+    const [modalOpen, setModalOpen] = useState(true);
+
+    const handleClose = () => {
+        setModalOpen(false);
+    };
+
     return (
         <div>
-            <AppointmentModal userRole="doctor" />
+            <AppointmentModal open={modalOpen} onClose={handleClose} />
         </div>
-    )
-}
+    );
+};
 
-export default DoctorApproval
+export default DoctorApproval;

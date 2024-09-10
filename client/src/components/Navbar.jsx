@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Avatar, Button, Tooltip, MenuItem, Container } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import AdbIcon from '@mui/icons-material/Adb';
 
 const pages = ['Home', 'Appointments'];
 const settings = ['Profile', 'Logout'];
@@ -16,7 +15,7 @@ function Navbar() {
     const handleCloseUserMenu = () => setAnchorElUser(null);
 
     return (
-        <AppBar position="static">
+        <AppBar position="static" sx={{ backgroundColor: '#4b4b9c' }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     {/* Custom Logo */}
@@ -40,16 +39,16 @@ function Navbar() {
                         >
                             {pages.map((page) => (
                                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                    <Typography textAlign="center">{page}</Typography>
+                                    <Typography textAlign="center" sx={{ color: '#4b4b9c' }}>{page}</Typography>
                                 </MenuItem>
                             ))}
                         </Menu>
                     </Box>
 
-                    {/* Desktop Navigation Buttons */}
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                    {/* Desktop Navigation Buttons aligned to the right */}
+                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
                         {pages.map((page) => (
-                            <Button key={page} onClick={handleCloseNavMenu} sx={{ color: 'white' }}>
+                            <Button key={page} onClick={handleCloseNavMenu} sx={{ color: 'white', fontWeight: 'bold' }}>
                                 {page}
                             </Button>
                         ))}
@@ -59,7 +58,7 @@ function Navbar() {
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="See Pages">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                                <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
                             </IconButton>
                         </Tooltip>
                         <Menu
@@ -72,7 +71,7 @@ function Navbar() {
                         >
                             {settings.map((setting) => (
                                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                    <Typography textAlign="center">{setting}</Typography>
+                                    <Typography textAlign="center" sx={{ color: '#4b4b9c' }}>{setting}</Typography>
                                 </MenuItem>
                             ))}
                         </Menu>
@@ -82,5 +81,4 @@ function Navbar() {
         </AppBar>
     );
 }
-
 export default Navbar;
