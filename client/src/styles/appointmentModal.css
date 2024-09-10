@@ -1,0 +1,24 @@
+/* appointmentModal.css */
+.modal-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 800px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 16px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    margin-bottom: 16px;
+}
+
+.modal-footer {
+    margin-top: 16px;
+    text-align: right;
+}

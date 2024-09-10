@@ -1,7 +1,7 @@
 // BookingComponent.js
 import { useState } from 'react';
 import { PaymentForm, CreditCard } from 'react-square-web-payments-sdk';
-import axios from 'axios';
+// import axios from 'axios';
 
 const specialties = [
     { name: 'Cardiology', fee: 100 },
