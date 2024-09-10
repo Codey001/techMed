@@ -19,22 +19,11 @@ function Navbar() {
         <AppBar position="static">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    {/* Desktop Logo */}
-                    <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-                    <Typography
-                        variant="h6"
-                        component="a"
-                        href="#"
-                        sx={{
-                            display: { xs: 'none', md: 'flex' },
-                            fontWeight: 700,
-                            textDecoration: 'none',
-                            color: 'inherit',
-                            mr: 2,
-                        }}
-                    >
-                        LOGO
-                    </Typography>
+                    {/* Custom Logo */}
+                    <div className="logo">
+                        <img src="logo.png" alt="TechMed Logo" className="logo-img" />
+                        <span className="logo-text">TechMed</span>
+                    </div>
 
                     {/* Mobile Menu Icon */}
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -56,23 +45,6 @@ function Navbar() {
                             ))}
                         </Menu>
                     </Box>
-
-                    {/* Mobile Logo */}
-                    <Typography
-                        variant="h5"
-                        component="a"
-                        href="#"
-                        sx={{
-                            display: { xs: 'flex', md: 'none' },
-                            flexGrow: 1,
-                            fontWeight: 700,
-                            textDecoration: 'none',
-                            color: 'inherit',
-                            mr: 2,
-                        }}
-                    >
-                        LOGO
-                    </Typography>
 
                     {/* Desktop Navigation Buttons */}
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
