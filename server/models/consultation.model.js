@@ -21,9 +21,11 @@ const consultationSchema = new mongoose.Schema({
   },
   diagnosis: {
     type: String,   // Doctor's diagnosis after the consultation
+    default: "",
   },
   prescription: {
     type: String,   // Prescription details or medications suggested
+    default: "",
   },
   consultationType: {
     type: String,
@@ -37,6 +39,7 @@ const consultationSchema = new mongoose.Schema({
   },
   //meeting url
   meetingRoomUrl: {
+    default:"",
     type: String
   },
   //payment id

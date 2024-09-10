@@ -18,25 +18,33 @@ const patientSchema = new mongoose.Schema({
     },
     gender: {
         type: String,
+        default: "",
     },
     // Add health information with encryption
     healthInfo: {
       pastMedicalConditions: {
+        default: "",
         type: String, 
         set: encrypt,
         get: decrypt
       },
       currentMedications: {
+        default: "",
+
         type: String, 
         set: encrypt,
         get: decrypt
       },
       allergies: {
+        default: "",
+
         type: String,
         set: encrypt,
         get: decrypt
       },
       familyMedicalHistory: {
+        default: "",
+
         type: String, 
         set: encrypt,
         get: decrypt

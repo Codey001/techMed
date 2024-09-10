@@ -50,6 +50,7 @@ const updateProfile = async(req,res) =>{
 
 const getProfile = async (req, res) => {
     const {id, type} = req.body;
+    console.log([id, type]);
 
     if(!id || !type){
         return res.status(400).json({message: "Incomplete request parameters"});
@@ -64,7 +65,7 @@ const getProfile = async (req, res) => {
         if(!patient){
             return res.status(404).json({message: "Patient not found"});
         }
-
+        console.log(patient)
         const decryptedPatient = patient.toObject({ getters: true });
 
         return res.status(200).json(decryptedPatient);
