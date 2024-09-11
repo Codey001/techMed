@@ -217,6 +217,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import DailyIframe from "@daily-co/daily-js";
 import { createClient, LiveTranscriptionEvents } from "@deepgram/sdk";
+import { useLocation } from 'react-router-dom';
 
 const DailyDeepgram = () => {
   const [isMeetingJoined, setIsMeetingJoined] = useState(false);
@@ -226,8 +227,10 @@ const DailyDeepgram = () => {
   const callFrame = useRef(null);
   const deepgramSocketRef = useRef(null);
   const mediaRecorderRef = useRef(null);
+  const location = useLocation();
+  const { meetingUrl } = location.state || {};
 
-  const dailyRoomURL = process.env.DAILY_ROOM_URL; // Replace with your Daily room URL
+  const dailyRoomURL = meetingUrl; // Replace with your Daily room URL
 
   // const dailyRoomURL = meetingUrl;
   const deepgramApiKey = import.meta.env.VITE_DEEPGRAM_API; // Replace with your Deepgram API Key
