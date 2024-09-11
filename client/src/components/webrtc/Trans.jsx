@@ -228,6 +228,8 @@ const DailyDeepgram = () => {
   const mediaRecorderRef = useRef(null);
 
   const dailyRoomURL = "https://project1.daily.co/EQJhN7cHN0Z9YSSslKjm"; // Replace with your Daily room URL
+
+  // const dailyRoomURL = meetingUrl;
   const deepgramApiKey = import.meta.env.VITE_DEEPGRAM_API; // Replace with your Deepgram API Key
 
   const joinMeeting = () => {
@@ -279,7 +281,6 @@ const DailyDeepgram = () => {
   };
 
   const startTranscription = async () => {
-
     const deepgram = createClient(deepgramApiKey);
 
     const connection = deepgram.listen.live({
@@ -326,20 +327,27 @@ const DailyDeepgram = () => {
   return (
     <div style={{ height: "100%" }}>
       {!isMeetingJoined ? (
-        <button
-          onClick={joinMeeting}
+        <div
           style={{
-            padding: "10px 20px",
-            backgroundColor: "blue",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            fontSize: "16px",
+            display: "flex",
+            justifyContent: "center",
           }}
         >
-          Join Meeting
-        </button>
+          <button
+            onClick={joinMeeting}
+            style={{
+              padding: "10px 20px",
+              backgroundColor: "blue",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+              fontSize: "16px",
+            }}
+          >
+            Join Meeting
+          </button>
+        </div>
       ) : (
         <>
           <div ref={videoRef} style={{ position: "absolute", zIndex: 1 }} />

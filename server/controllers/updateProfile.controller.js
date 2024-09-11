@@ -6,6 +6,7 @@ import Consultation from "../models/consultation.model.js";
 const updateProfile = async (req, res) => {
   const { type } = req.body;
   if (type === "Patient") {
+    console.log("patient update request")
     const { id, gender, healthInfo } = req.body;
     if (!id) {
       return res.status(400).json({ message: "User not found" });

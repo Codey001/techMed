@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate} from 'react-router-dom';
-import { logout } from "../store/authSlice.js";
+import { logout } from "../../store/authSlice";
 import { useDispatch } from "react-redux";
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -62,7 +62,7 @@ const Navbar = () => {
         {/* Company Name */}
         <Link to="/">
     <div className="text-xl font-bold text-blue-600 cursor-pointer">
-      MyHealthApp
+      techMed
     </div>
   </Link>
 

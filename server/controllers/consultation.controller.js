@@ -193,6 +193,8 @@ async function patientConsultations(req,res){
             return res.status(404).json({message: "No consultations found"});
         }
 
+        console.log(consultations)
+
         //send all the consultaions
         res.status(200).json(consultations); // Return the updated consultation
 
