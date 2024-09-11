@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 function DoctorDetails() {
@@ -15,13 +16,12 @@ function DoctorDetails() {
     const navigate = useNavigate();
     const [specializationOptions, setSpecializationOptions] = useState([]);
 
-    let type = "Doctor";
-    let id = "66e0c7640b2b5e328e88407c";
+    let type = useSelector((state) => state.userData?.type);
+    let id = useSelector((state) => state.userData?._id);
 
     useEffect(() => {
         const fetchDoctorDetails = async () => {
             try {
-               
                 const apiUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
                 const response = await fetch(`${apiUrl}/api/profile/get`, {
                     method: "POST",
@@ -34,12 +34,13 @@ function DoctorDetails() {
                     throw new Error("Network response was not ok");
                 }
                 const data = await response.json();
+                console.log([data.name, data.email, data.specialization]);
                 setDoctor(data);
                 setOriginalDoctor(data);
                 setFormData({
                     name: data.name,
                     email: data.email,
-                    specialization: data.specialization._id,
+                    specialization: data.specialization,
                 });
             } catch (error) {
                 setError(error.message);
@@ -53,6 +54,7 @@ function DoctorDetails() {
 
     const handleEditClick = async () => {
         setIsEditing(true);
+
         try {
             const baseUrl = import.meta.env.VITE_BACKEND_URL;
             const response = await fetch(`${baseUrl}/api/specialization/read`, {
@@ -65,14 +67,11 @@ function DoctorDetails() {
                 throw new Error("Network response was not ok");
             }
             const data = await response.json();
+            console.log([data]);
             const specializations = data.records;
-            setFormData({
-                ...formData,
-                specialization: "",
-            });
             setSpecializationOptions(
                 specializations.map((specialization) => ({
-                    value: specialization._id,
+                    value: specialization.type,
                     label: specialization.type,
                 }))
             );
@@ -86,7 +85,7 @@ function DoctorDetails() {
         setFormData({
             name: originalDoctor.name,
             email: originalDoctor.email,
-            specialization: originalDoctor.specialization._id,
+            specialization: originalDoctor.specialization,
         });
     };
 
@@ -99,29 +98,28 @@ function DoctorDetails() {
     };
 
     const handleSaveClick = async () => {
+        console.log([id]);
+
         try {
             const baseUrl = import.meta.env.VITE_BACKEND_URL;
 
             const response = await fetch(`${baseUrl}/api/profile/update`, {
-                method: "POST",
+                method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    type,
-                    id,
-                    name: formData.name,
+                    id: id,
+                    type: type,
                     specialization: formData.specialization,
                 }),
             });
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
+
             const data = await response.json();
             setDoctor(data);
             setOriginalDoctor(data);
             setIsEditing(false);
-            navigate("/doctor-approval");
+            navigate("/");
         } catch (error) {
             setError(error.message);
         }
@@ -158,6 +156,7 @@ function DoctorDetails() {
                         </div>
                         <div className="flex flex-col sm:flex-row items-start sm:items-center sm:space-x-6">
                             <div className="text-lg sm:text-xl font-semibold text-blue-700">Specialization:</div>
+
                             <select
                                 name="specialization"
                                 value={formData.specialization}
@@ -198,7 +197,7 @@ function DoctorDetails() {
                         </div>
                         <div className="flex flex-col sm:flex-row items-start sm:items-center sm:space-x-6">
                             <div className="text-lg sm:text-xl font-semibold text-blue-700">Specialization:</div>
-                            <div className="text-base sm:text-lg text-blue-800">{doctor.specialization.type}</div>
+                            <div className="text-base sm:text-lg text-blue-800">{doctor.specialization}</div>
                         </div>
                         <div className="flex justify-center mt-6">
                             <button
