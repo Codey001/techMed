@@ -16,7 +16,7 @@ const MeetingComponent = () => {
 
   const dailyRoomURL = meetingUrl; 
 
-  const deepgramApiKey = import.meta.env.VITE_DEEPGRAM_API;Key
+  const deepgramApiKey = import.meta.env.VITE_DEEPGRAM_API;
 
   const joinMeeting = () => {
     setIsMeetingJoined(true);
