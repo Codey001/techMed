@@ -287,7 +287,8 @@ const Booking = () => {
         // Fetch specializations when the component mounts
         const fetchSpecializations = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/specialization/read", {
+                const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+                const response = await fetch(`${apiUrl}/api/specialization/read`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -336,7 +337,8 @@ const Booking = () => {
             const timestamp = selectedDateTime.toISOString(); // Convert the combined date and time to ISO format
 
             // Send payment request with the timestamp
-            const response = await axios.post('http://localhost:8080/api/payment', {
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+            const response = await axios.post(`${apiUrl}/api/payment`, {
                 sourceId: token.token,
                 patientId: id,
                 amount: selectedSpecialty.fees,

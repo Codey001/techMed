@@ -6,7 +6,8 @@ const PatientDashboard = () => {
     // Define your POST request function
     const makePostRequest = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/specialization/read', {
+        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+        const response = await fetch(`${apiUrl}/api/specialization/read`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -14,7 +15,7 @@ const PatientDashboard = () => {
           }
         });
 
-        console.log("patient dashboard req",response)
+        console.log("patient dashboard req", response)
       } catch (error) {
         console.error('Error occurred while making the POST request:', error);
       }

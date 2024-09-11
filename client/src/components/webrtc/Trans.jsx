@@ -227,7 +227,7 @@ const DailyDeepgram = () => {
   const deepgramSocketRef = useRef(null);
   const mediaRecorderRef = useRef(null);
 
-  const dailyRoomURL = "https://project1.daily.co/EQJhN7cHN0Z9YSSslKjm"; // Replace with your Daily room URL
+  const dailyRoomURL = process.env.DAILY_ROOM_URL; // Replace with your Daily room URL
 
   // const dailyRoomURL = meetingUrl;
   const deepgramApiKey = import.meta.env.VITE_DEEPGRAM_API; // Replace with your Deepgram API Key

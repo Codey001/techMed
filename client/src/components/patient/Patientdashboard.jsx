@@ -50,7 +50,7 @@
 //   async function joinMeeting(consultationId){
 //     //make request
 //     try {
-        
+
 //       const response = await fetch('http://localhost:8080/api/consultation/joinMeeting', {
 //         method: 'PATCH',
 //         headers: {
@@ -206,7 +206,7 @@ import {
   Paper,
 } from "@mui/material";
 import { format } from "date-fns";
-import PatientConsultationModal from "./PatientConsultationModal";
+import PatientConsultationModal from "./Patientconsultationmodal"
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -223,8 +223,8 @@ export default function PatientDashboard() {
   useEffect(() => {
     const fetchConsultations = async () => {
       try {
-        const response = await axios.post(
-          "http://localhost:8080/api/consultation/patient/allConsultations",
+        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+        const response = await axios.post(`${apiUrl}/api/consultation/patient/allConsultations`,
           {
             type: type,
             patientId: id,
@@ -244,7 +244,8 @@ export default function PatientDashboard() {
 
   async function joinMeeting(consultationId) {
     try {
-      const response = await fetch('http://localhost:8080/api/consultation/joinMeeting', {
+      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+      const response = await fetch(`${apiUrl}/api/consultation/joinMeeting`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

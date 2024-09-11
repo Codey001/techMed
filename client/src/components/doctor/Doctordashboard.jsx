@@ -153,7 +153,7 @@
 //   async function joinMeeting(consultationId){
 //     //make request
 //     try {
-        
+
 //       const response = await fetch('http://localhost:8080/api/consultation/joinMeeting', {
 //         method: 'PATCH',
 //         headers: {
@@ -186,7 +186,7 @@
 //   async function acceptConsultation(consultationId){
 
 //     try {
-        
+
 //       const response = await fetch('http://localhost:8080/api/consultation/assignDoctor', {
 //         method: 'PATCH',
 //         headers: {
@@ -375,8 +375,10 @@ export default function DoctorDashboard() {
   useEffect(() => {
     const fetchUnattendedPatients = async () => {
       try {
+        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+
         const response = await axios.post(
-          "http://localhost:8080/api/consultation/doctor/allPatients",
+          `${apiUrl}/api/consultation/doctor/allPatients`,
           {
             type: type,
             doctorId: id,

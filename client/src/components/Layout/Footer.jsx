@@ -40,7 +40,7 @@ export default function Footer() {
                 </Link>
             </Box>
             <Box sx={{ mb: 2 }}>
-                <IconButton href="https://github.com/Codey001/doctorConsultation" aria-label="GitHub">
+                <IconButton href="https://github.com/Codey001/techMed" aria-label="GitHub">
                     <GitHubIcon />
                 </IconButton>
                 <IconButton href="https://twitter.com/" aria-label="Twitter">

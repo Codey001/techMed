@@ -294,7 +294,8 @@ function PatientDetails() {
     useEffect(() => {
         const fetchPatientDetails = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/profile/get', {
+                const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+                const response = await fetch(`${apiUrl}/api/profile/get`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -368,7 +369,8 @@ function PatientDetails() {
 
     const handleSaveClick = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/profile/update', {
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+            const response = await fetch(`${apiUrl}/api/profile/update`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
