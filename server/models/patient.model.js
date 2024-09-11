@@ -20,7 +20,8 @@ const patientSchema = new mongoose.Schema({
         type: String,
         default: "",
     },
-    // Add health information with encryption
+  
+    //ENCRYPTED HEALTH INFORMATION
     healthInfo: {
       pastMedicalConditions: {
         default: "",

@@ -9,7 +9,6 @@ const signup = async (req, res) => {
     const { type,name, email, password, confirmPassword } = req.body;
     console.log([type,name, email, password, confirmPassword])
 
-    // Validate inputs
     if (!email || !password || !confirmPassword, !name) {
       return res.status(400).json({ error: "All fields are required" });
     }
@@ -27,16 +26,16 @@ const signup = async (req, res) => {
       return res.status(400).json({ error: "Invalid user type" });
     }
 
-    // Check if user already exists
+    // USER ALREADY EXIST
     if (user) {
       return res.status(400).json({ error: "User already exists" });
     }
 
-    // Hash password
+    
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create new user based on the type
+    // CREATE NEW USER
     let newUser;
     if (type === "Patient") {
       newUser = new Patient({name, email, passwordHash: hashedPassword });
@@ -46,9 +45,8 @@ const signup = async (req, res) => {
       return res.status(400).json({ error: "Invalid user type" });
     }
 
-    // Save the new user and generate JWT token
     await newUser.save();
-    generateTokenAndSetCookie(newUser._id, res);  // Handle token generation errors in that function
+    generateTokenAndSetCookie(newUser._id, res);  
 
     return res.status(201).json({ _id: newUser._id, type: type });
 
@@ -63,7 +61,6 @@ const login = async (req, res) => {
   try {
     const { type, email, password } = req.body;
 
-    // Validate input
     if (!type || !email || !password) {
       return res.status(400).json({ error: "All fields are required" });
     }
@@ -77,15 +74,12 @@ const login = async (req, res) => {
       return res.status(400).json({ error: "Invalid user type" });
     }
 
-    // Check if user exists and password is correct
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
       return res.status(400).json({ error: "Invalid email or password" });
     }
 
-    // Generate JWT token and set cookie
     generateTokenAndSetCookie(user._id, res);
 
-    // Respond with user ID
     return res.status(201).json({ _id: user._id, type: type });
 
   } catch (error) {

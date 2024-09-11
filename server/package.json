@@ -21,6 +21,7 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.6.1",
-    "square": "^38.0.0"
+    "square": "^38.0.0",
+    "uuid": "^10.0.0"
   }
 }

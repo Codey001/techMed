@@ -3,28 +3,29 @@ import mongoose from "mongoose";
 const consultationSchema = new mongoose.Schema({
   patient: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Patient',   // Reference to the Patient model
+    ref: 'Patient',  
     required: true
   },
   doctor: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Doctor',   // Reference to the Doctor model
+    ref: 'Doctor',  
+    
   },
   timestamp: {
-    type: Date, // Combined Date and Time as a single timestamp
+    type: Date, 
     required: true,
 
   },
   symptoms: {
-    type: String,   // Summary of symptoms reported by the patient
+    type: String, 
     required: true
   },
   diagnosis: {
-    type: String,   // Doctor's diagnosis after the consultation
+    type: String,
     default: "",
   },
   prescription: {
-    type: String,   // Prescription details or medications suggested
+    type: String, 
     default: "",
   },
   consultationType: {

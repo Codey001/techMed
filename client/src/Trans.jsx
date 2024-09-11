@@ -137,23 +137,20 @@
 //       mediaRecorderRef.current.stop();
 //     }
 
-
-
 //     // if (deepgramSocketRef.current) {
 //     //   deepgramSocketRef.current.close();
 //     // }
 //     setTranscription(""); // Clear transcription text
 //   };
 
-  
-
 //   return (
-//     <div style={{ position: "relative" }}>
+//     <div style={{ height:"100%",  }}>
 //       {/* Show "Join Meeting" button initially */}
 //       {!isMeetingJoined ? (
 //         <button
 //           onClick={joinMeeting}
 //           style={{
+
 //             padding: "10px 20px",
 //             backgroundColor: "blue",
 //             color: "white",
@@ -168,7 +165,7 @@
 //       ) : (
 //         <>
 //           {/* Video container */}
-//           <div ref={videoRef} style={{ position: "relative", zIndex: 1 }} />
+//           <div ref={videoRef} style={{ position: "absolute", zIndex: 1 }} />
 
 //           {/* Transcription overlay */}
 //           {isTranscribing && (
@@ -217,15 +214,9 @@
 
 // export default DailyDeepgram;
 
-
-
-
 import React, { useEffect, useRef, useState } from "react";
 import DailyIframe from "@daily-co/daily-js";
 import { createClient, LiveTranscriptionEvents } from "@deepgram/sdk";
-import { Video, Mic, MicOff } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const DailyDeepgram = () => {
   const [isMeetingJoined, setIsMeetingJoined] = useState(false);
@@ -236,49 +227,43 @@ const DailyDeepgram = () => {
   const deepgramSocketRef = useRef(null);
   const mediaRecorderRef = useRef(null);
 
-  const dailyRoomURL = "https://project1.daily.co/EQJhN7cHN0Z9YSSslKjm";
-  const deepgramApiKey = import.meta.env.VITE_DEEPGRAM_API;
+  const dailyRoomURL = "https://project1.daily.co/EQJhN7cHN0Z9YSSslKjm"; // Replace with your Daily room URL
+  const deepgramApiKey = import.meta.env.VITE_DEEPGRAM_API; // Replace with your Deepgram API Key
 
   const joinMeeting = () => {
     setIsMeetingJoined(true);
+
     callFrame.current = DailyIframe.createFrame({
       iframeStyle: {
         position: "absolute",
         width: "100%",
         height: "100%",
         border: "0",
-        borderRadius: "12px",
-        overflow: "hidden",
+        zIndex: 1,
       },
       showLeaveButton: true,
     });
 
     callFrame.current.join({ url: dailyRoomURL });
-    callFrame.current.on("track-started", handleTrackStarted);
+
+    callFrame.current.on("track-started", (event) => {
+      if (event.track.kind === "audio") {
+        const audioTrack = event.track;
+        console.log("Audio track started", audioTrack);
+        const mediaStream = new MediaStream([audioTrack]);
+        mediaRecorderRef.current = new MediaRecorder(mediaStream);
+      }
+    });
+
     callFrame.current.on("joined-meeting", handleJoinedMeeting);
   };
 
-  const handleTrackStarted = (event) => {
-    if (event.track.kind === "video") {
-      // Attach the video track to the videoRef container
-      const videoTrack = event.track;
-      const videoElement = videoRef.current;
-      if (videoElement) {
-        videoElement.srcObject = new MediaStream([videoTrack]);
-        videoElement.play();
-      }
-    }
-
-    if (event.track.kind === "audio") {
-      const audioTrack = event.track;
-      const mediaStream = new MediaStream([audioTrack]);
-      mediaRecorderRef.current = new MediaRecorder(mediaStream);
-    }
-  };
-
   const handleJoinedMeeting = async () => {
-    console.log("Joined the Daily meeting");
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+      video: false,
+    });
+    console.log("streaming audio stream", stream);
     if (stream) {
       mediaRecorderRef.current = new MediaRecorder(stream);
     }
@@ -294,8 +279,9 @@ const DailyDeepgram = () => {
   };
 
   const startTranscription = async () => {
-    console.log("Transcription started");
+
     const deepgram = createClient(deepgramApiKey);
+
     const connection = deepgram.listen.live({
       model: "nova-2",
       language: "en-US",
@@ -303,19 +289,19 @@ const DailyDeepgram = () => {
     });
 
     connection.on(LiveTranscriptionEvents.Open, () => {
-      console.log("Deepgram connection opened.");
       mediaRecorderRef.current.ondataavailable = async (event) => {
         if (event.data.size > 0) {
           connection.send(event.data);
         }
       };
+
       mediaRecorderRef.current.start(250);
     });
 
     connection.on(LiveTranscriptionEvents.Transcript, (data) => {
       const transcript = data.channel.alternatives[0].transcript;
       if (transcript) {
-        setTranscription((prev) => `${prev}\n${transcript}`);
+        setTranscription((prev) => `${transcript}`);
       }
     });
 
@@ -338,49 +324,74 @@ const DailyDeepgram = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div style={{ height: "100%" }}>
       {!isMeetingJoined ? (
-        <Button
+        <button
           onClick={joinMeeting}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition-all duration-300 ease-in-out transform hover:scale-105"
+          style={{
+            padding: "10px 20px",
+            backgroundColor: "blue",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            fontSize: "16px",
+          }}
         >
-          <Video className="mr-2" />
           Join Meeting
-        </Button>
+        </button>
       ) : (
-        <Card className="w-full max-w-4xl bg-white shadow-xl rounded-lg overflow-hidden">
-          <CardHeader className="bg-blue-600 text-white p-4">
-            <CardTitle className="text-2xl font-bold">Video Conference</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="relative aspect-video">
-              <video ref={videoRef} className="w-full h-full" autoPlay playsInline />
+        <>
+          <div ref={videoRef} style={{ position: "absolute", zIndex: 1 }} />
+
+          {isTranscribing && (
+            <div
+              style={{
+                position: "absolute",
+                top: "90%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: "80%",
+                maxWidth: "600px",
+                // backgroundColor: "rgba(0, 0, 0, 0.7)",
+                color: "white",
+                padding: "20px",
+                textAlign: "center",
+                borderRadius: "8px",
+                zIndex: 5,
+                fontSize: "18px",
+                lineHeight: "1.5",
+                overflow: "hidden",
+                display: "-webkit-box",
+                WebkitBoxOrient: "vertical",
+                WebkitLineClamp: 2, // Limit to two lines
+                whiteSpace: "pre-wrap",
+              }}
+            >
+              {transcription}
             </div>
-            <div className="p-4">
-              <Button
-                onClick={toggleTranscription}
-                className={`${
-                  isTranscribing ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"
-                } text-white font-bold py-2 px-4 rounded-full transition-all duration-300 ease-in-out transform hover:scale-105 mb-4`}
-              >
-                {isTranscribing ? <MicOff className="mr-2" /> : <Mic className="mr-2" />}
-                {isTranscribing ? "Stop Transcription" : "Start Transcription"}
-              </Button>
-              {isTranscribing && (
-                <Card className="mt-4 bg-gray-100 shadow-inner">
-                  <CardHeader>
-                    <CardTitle className="text-lg font-semibold text-gray-700">Live Transcription</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="max-h-40 overflow-y-auto">
-                      <pre className="whitespace-pre-wrap text-sm text-gray-600">{transcription}</pre>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+          )}
+
+          <button
+            onClick={toggleTranscription}
+            style={{
+              position: "absolute",
+              bottom: "50px",
+              left: "10px",
+              padding: "2px 5px",
+              background: isTranscribing ? "#2196F3" : "#4CAF50", // Blue when active, green when inactive
+              color: "white",
+              border: "none",
+              borderRadius: "20px", // Rounded corners
+              cursor: "pointer",
+              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)", // Soft shadow for depth
+              transition: "background 0.3s ease", // Smooth background color transition
+              zIndex: 2,
+            }}
+          >
+            {isTranscribing ? "Stop Transcription" : "Start Transcription"}
+          </button>
+        </>
       )}
     </div>
   );

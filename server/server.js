@@ -10,27 +10,24 @@ import connectToMongoDB from "./db/connectToMongoDB.js";
 import specializationRoute from "./routes/specialization.route.js"
 import consultationRoute from "./routes/consultation.route.js"
 import paymentRoute from "./routes/payment.route.js"
+import protectRoute from "./middlewares/protectRoute.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+//MIDDLEWARE
 app.use(cors());
-app.use(express.json()); //to parse the incoming request from Json payload(from req.body)
+app.use(express.json()); 
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-
-//TODO : PROTECT THE ROUTES
-
-app.use("/api/auth", authRoutes);
-
-app.use("/api/profile", updateProfileRoute);
-app.use("/api/specialization", specializationRoute)
-
-app.use("/api/consultation",consultationRoute);
-
-app.use("/api/payment", paymentRoute);
+    
+//ROUTES
+app.use("/api/auth", authRoutes); 
+app.use("/api/profile",protectRoute, updateProfileRoute); 
+app.use("/api/specialization",protectRoute, specializationRoute)
+app.use("/api/consultation",protectRoute, consultationRoute);
+app.use("/api/payment",protectRoute, paymentRoute);
 
 
 app.listen(PORT, () => {

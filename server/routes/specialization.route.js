@@ -3,7 +3,11 @@ import {createSpecialization, readSpecialization} from '../controllers/specializ
 
 
 const router = express.Router();
+
+//CREATE NEW SPECIALIZATION IN THE DATABASE
 router.post("/create", createSpecialization);
+
+//READ ALL SPECIALIZATIONS IN THE DATABASE
 router.post("/read", readSpecialization);
 
 export default router;

@@ -1,28 +1,28 @@
 import { Client, Environment, ApiError } from "square";
 import { createConsultation } from "./consultation.controller.js";
+import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
 
-
+//GENERATE UNIQUE ID FOR PAYMENT
 function generateIdempotencyKey() {
-  const timestamp = new Date().toISOString().replace(/[-:.]/g, "");
-  const randomPart = Math.random().toString(36).substr(2, 8);
-  const idempotencyKey = `${timestamp}-${randomPart}`;
-  return idempotencyKey.substring(0, 45);
+  const idempotencyKey = uuidv4();
+  return idempotencyKey;
 }
 
+//MAKE PAYMENT AND CREATE NEW CONSULTATION
 async function paymentAndConsultation(req, res) {
   try {
-    // Configure Square client
-    const squareClient = new Client({
-      environment: Environment.Sandbox, // Use Environment.Production in production
-      accessToken: process.env.SQUARE_ACCESS_TOKEN, // Use environment variable for security
-    });
-
-    // const { sourceId, amount, patientName, symptoms, specialty } = req.body;
-
     const { sourceId, patientId, amount, specialty, symptoms, timestamp } =
       req.body;
 
-    if (!sourceId || !amount || !patientName || !specialty) {
+    if (
+      !sourceId ||
+      !amount ||
+      !patientId ||
+      !specialty ||
+      !symptoms ||
+      !timestamp
+    ) {
       console.log("Missing required fields");
       return res
         .status(400)
@@ -30,41 +30,57 @@ async function paymentAndConsultation(req, res) {
     }
 
     try {
-      const idempotencyKey = generateIdempotencyKey();
-
-      const paymentRequest = {
-        sourceId: sourceId,
-        idempotencyKey: idempotencyKey,
-        amountMoney: {
-          amount: parseInt(amount), // Ensure amount is an integer
+      const data = {
+        source_id: "cnon:card-nonce-ok",
+        idempotency_key: generateIdempotencyKey(),
+        amount_money: {
+          amount: Math.round(parseFloat(amount) * 100),
           currency: "USD",
         },
-        note: `Consultation for ${patientName} - ${specialty}`,
+        note: `Consultation for ${patientId} - ${specialty}`,
       };
 
       try {
-        const response = await squareClient.paymentsApi.createPayment(
-          paymentRequest
-        );
+        const url = process.env.PAYMENT_API_URL;
+        const headers = {
+          "Square-Version": "2024-08-21",
+          Authorization: `Bearer ${process.env.SQUARE_ACCESS_TOKEN}`, 
+          "Content-Type": "application/json",
+        };
+        axios
+          .post(url, data, { headers })
+          .then((response) => {
+            const transactionId = response.data.payment.id;
 
-        if(!response){
-            console.error("Square API Error:", response.errors);
-            res.status(400).json({ success: false, error: response.errors[0].detail });
-            return;
-        }
-
-        const transactionId = response.result.payment.id;
-
-        console.log("Square payment successful:", response);
-
-      //CREATE CONSULTATION
-        return await createConsultation(patientId, timestamp, symptoms, transactionId, specialty);
-
+            // CREATE CONSULTATION
+            createConsultation(
+              patientId,
+              timestamp,
+              symptoms,
+              transactionId,
+              specialty
+            )
+              .then((consultation) => {
+                res.status(200).json({ consultation: consultation });
+              })
+              .catch((consultationError) => {
+                console.error(
+                  "Consultation Creation Error:",
+                  consultationError
+                );
+                res
+                  .status(500)
+                  .json({ message: "Error creating consultation" });
+              });
+          })
+          .catch((error) => {
+            console.error("Payment Error:", error);
+            res.status(400).json({ message: "Error making payment" });
+          });
       } catch (error) {
         console.error("Square API Error:", error.message);
         res.status(400).json({ success: false, error: error.message });
       }
-
     } catch (error) {
       console.error("Payment processing error:", error);
       if (error instanceof ApiError) {

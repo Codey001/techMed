@@ -1,5 +1,6 @@
 import Specialization from "../models/specialization.model.js"
 
+//CREATE NEW SPECIALIZATION FOR DOCTOR
 async function createSpecialization(req,res){
     try {
         const {name, amount} = req.body;
@@ -18,6 +19,7 @@ async function createSpecialization(req,res){
     }   
 }
 
+// FETCH THE LIST OF ALL THE AVAILABLE SPECIALIZATIONS OF DOCTOR
 async function readSpecialization(req,res){
     try {
         const records = await Specialization.find({});

@@ -3,8 +3,13 @@ import {updateProfile, getProfile, patientInfo} from "../controllers/updateProfi
 
 const router =  express.Router();
 
-router.post('/update', updateProfile);
+//DOCTOR AND PATIENT CAN UPDATE THEIR PROFILE
+router.patch('/update', updateProfile);
+
+//DOCTOR AND PATIENT CAN FETCH THEIR PROFILE
 router.post('/get', getProfile);
-router.post('/patientInfo', patientInfo);
+
+//DOCTOR CAN FETCH THE PATIENT INFORMATION BEFOR THE CONSULTATION
+router.post('/patientInfo', patientInfo); 
 
 export default router;
