@@ -20,6 +20,8 @@ export class AuthService {
 
     // console.log("signup data", response);
     const responseData = await this.login({type, email, password})
+
+
     return responseData;
 
 
@@ -39,6 +41,7 @@ export class AuthService {
         password: password,
       });
       console.log("LOFIN RETURN RESPONSE", response);
+
       return response;
     } catch (error) {
       console.log(error);
@@ -53,6 +56,7 @@ export class AuthService {
       const url = `http://localhost:8080/api/auth/logout`;
       const response = await axios.post(url);
   
+
         return response;
 
     } catch (error) {

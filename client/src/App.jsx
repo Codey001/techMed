@@ -31,6 +31,10 @@ function App() {
   const isLoggedIn = useSelector((state) => state.status);
   const type = useSelector((state) => state.userData?.type)
 
+
+  
+
+
   console.log(["store in app component",isLoggedIn, type])
 
   const DashboardRoute = ({ isLoggedIn, type }) => {
