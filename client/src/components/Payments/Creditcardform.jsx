@@ -1,11 +1,11 @@
 import { CreditCard } from "react-square-web-payments-sdk";
 
 const CreditCardForm = () => {
-    return (
-        <>
-            <CreditCard />
-        </>
-    );
+  return (
+    <>
+      <CreditCard />
+    </>
+  );
 };
 
 export default CreditCardForm;

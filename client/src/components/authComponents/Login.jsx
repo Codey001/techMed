@@ -18,7 +18,6 @@ function Login() {
     setError("");
     try {
       const userData = await authService.login(data);
-      console.log("USER DATA", userData.data);
       if (userData) {
         dispatch(authLogin(userData.data));
         toast.success("LOGIN SUCCESSFUL");

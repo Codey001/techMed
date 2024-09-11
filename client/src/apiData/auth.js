@@ -1,47 +1,37 @@
 import axios from "axios";
 
 export class AuthService {
-  async createAccount({ type,name, email, password, confirmPassword }) {
-    console.log("SIGNUP CALLED IN AUTH");
-    console.log([type,name, email, password, confirmPassword])
-
-
+  async createAccount({ type, name, email, password, confirmPassword }) {
     try {
-      // const url = `${process.env.REACT_APP_AUTH_BASE_URL}/auth/register`;
-      const url = `http://localhost:8080/api/auth/signup`;
-
+      const baseUrl = import.meta.env.VITE_BACKEND_URL;
+      const url = `${baseUrl}/api/auth/signup`;
       const response = await axios.post(url, {
         type: type,
-        name:name,
+        name: name,
         email: email,
         password: password,
         confirmPassword: confirmPassword,
       });
 
-    // console.log("signup data", response);
-    const responseData = await this.login({type, email, password})
+      const responseData = await this.login({ type, email, password });
 
-
-    return responseData;
-
-
+      return responseData;
     } catch (error) {
       console.log(error);
       throw error;
     }
   }
 
-  async login({ type, email, password}) {
-    console.log("LOGIN CALLED IN AUTH");
+  async login({ type, email, password }) {
     try {
-      const url = `http://localhost:8080/api/auth/login`;
+      const baseUrl = import.meta.env.VITE_BACKEND_URL;
+
+      const url = `${baseUrl}/api/auth/login`;
       const response = await axios.post(url, {
         type: type,
         email: email,
         password: password,
       });
-      console.log("LOFIN RETURN RESPONSE", response);
-
       return response;
     } catch (error) {
       console.log(error);
@@ -49,16 +39,14 @@ export class AuthService {
     }
   }
 
-
   async logOut() {
     try {
+      const baseUrl = import.meta.env.VITE_BACKEND_URL;
 
-      const url = `http://localhost:8080/api/auth/logout`;
+      const url = `${baseUrl}/api/auth/logout`;
       const response = await axios.post(url);
-  
 
-        return response;
-
+      return response;
     } catch (error) {
       console.log("Error in logout", error);
     }
@@ -66,5 +54,4 @@ export class AuthService {
 }
 
 const authService = new AuthService();
-
 export default authService;

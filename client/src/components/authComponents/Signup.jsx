@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 
 import Button from "./Button";
 import Input from "./Input";
-import { toast } from "react-toastify";
 
 import authService from "../../apiData/auth";
 import { login as authLogin } from "../../store/authSlice.js";
@@ -17,14 +16,12 @@ const Signup = () => {
   const { register, handleSubmit } = useForm();
 
   const create = async (data) => {
-    console.log("input data --> ", data);
     setError("");
 
     try {
       const userData = await authService.createAccount(data);
       if (userData) {
         dispatch(authLogin(userData.data));
-        toast.success("SIGNUP SUCCESSFUL");
         navigate("/dashboard");
       }
     } catch (error) {
