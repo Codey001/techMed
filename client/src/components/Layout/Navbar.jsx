@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useNavigate} from 'react-router-dom';
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { logout } from "../../store/authSlice";
 import { useDispatch } from "react-redux";
-import axios from 'axios';
-import { Link } from 'react-router-dom';
-
+import axios from "axios";
+import { Link } from "react-router-dom";
+import docPic from "./doc.png"
+import patPic from "./pat.png"
 
 const Navbar = () => {
   const isLoggedIn = useSelector((state) => state.status);
@@ -17,8 +18,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const userProfile = useSelector((state) => state.userData)
-
+  const userProfile = useSelector((state) => state.userData);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
@@ -29,23 +29,33 @@ const Navbar = () => {
   };
 
   const handleLoginClick = () => {
-    navigate('/login'); // Adjust the path as needed
+    toggleProfileMenu()
+    toggleMobileMenu()
+    navigate("/login"); // Adjust the path as needed
   };
 
   const handleSignUpClick = () => {
-    navigate('/signup'); // Adjust the path as needed
+    toggleProfileMenu()
+    toggleMobileMenu()
+    navigate("/signup"); // Adjust the path as needed
   };
 
   const handleProfileClick = () => {
-
-
-    console.log(userProfile)
-
-
-    navigate('/profile'); // Adjust the path as needed
+    console.log(userProfile);
+    toggleProfileMenu()
+    toggleMobileMenu()
+    navigate("/profile"); // Adjust the path as needed
   };
 
+  const handleDashboardClick = () => {
+    toggleProfileMenu()
+    toggleMobileMenu()
+    navigate("/dashboard"); // Adjust the path as needed
+  }
+
   const handleLogoutClick = () => {
+    toggleProfileMenu()
+    toggleMobileMenu()
 
     //HANDLE LOGOUT
     logout();
@@ -53,18 +63,18 @@ const Navbar = () => {
     dispatch(logout());
 
     // Add your logout logic here, e.g., clearing tokens, etc.
-    navigate('/'); // Redirect to login page after logout
+    navigate("/"); // Redirect to login page after logout
   };
 
   return (
-    <nav className="bg-blue-100 p-4">
+    <nav className="bg-blue-100 p-4 z-10">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Company Name */}
         <Link to="/">
-    <div className="text-xl font-bold text-blue-600 cursor-pointer">
-      techMed
-    </div>
-  </Link>
+          <div className="text-xl font-bold text-blue-600 cursor-pointer">
+            techMed
+          </div>
+        </Link>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex space-x-4 items-center relative">
@@ -86,20 +96,26 @@ const Navbar = () => {
           ) : (
             <div className="relative">
               <div onClick={toggleProfileMenu} className="cursor-pointer">
-                {userType === 'Doctor' ? (
-                  <div className="bg-blue-500 rounded-full text-white w-10 h-10 flex items-center justify-center">
-                    D
+                {userType === "Doctor" ? (
+                  <div className="bg-blue-500 rounded-full text-white w-10 h-10 flex items-center justify-center overflow-hidden">
+                    <img src={docPic} alt="" />
                   </div>
                 ) : (
-                  <div className="bg-blue-500 rounded-full text-white w-10 h-10 flex items-center justify-center">
-                    P
+                  <div className="bg-blue-500 rounded-full text-white w-10 h-10 flex items-center justify-center overflow-hidden">
+                    <img src={patPic} alt="" />
                   </div>
                 )}
               </div>
 
               {/* Dropdown Menu */}
               {isProfileMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg">
+                <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-10">
+                <a
+                    onClick={handleDashboardClick}
+                    className="block px-4 py-2 text-blue-600 hover:bg-blue-100 cursor-pointer"
+                  >
+                    Dashboard
+                  </a>
                   <a
                     onClick={handleProfileClick}
                     className="block px-4 py-2 text-blue-600 hover:bg-blue-100 cursor-pointer"
@@ -121,20 +137,17 @@ const Navbar = () => {
         {/* Mobile Menu Toggle Button */}
         <div className="md:hidden">
           <button onClick={toggleMobileMenu} className="text-blue-600">
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16m-7 6h7"
-              ></path>
-            </svg>
+          <div onClick={toggleProfileMenu} className="cursor-pointer">
+                {userType === "Doctor" ? (
+                  <div className="bg-blue-500 rounded-full text-white w-10 h-10 flex items-center justify-center overflow-hidden">
+                    <img src={docPic} alt="" />
+                  </div>
+                ) : (
+                  <div className="bg-blue-500 rounded-full text-white w-10 h-10 flex items-center justify-center overflow-hidden">
+                    <img src={patPic} alt="" />
+                  </div>
+                )}
+              </div>
           </button>
         </div>
       </div>
@@ -158,37 +171,26 @@ const Navbar = () => {
               </button>
             </>
           ) : (
-            <div className="relative">
-              <div onClick={toggleProfileMenu} className="cursor-pointer">
-                {userType === 'Doctor' ? (
-                  <div className="bg-blue-500 rounded-full text-white w-10 h-10 flex items-center justify-center">
-                    D
-                  </div>
-                ) : (
-                  <div className="bg-blue-500 rounded-full text-white w-10 h-10 flex items-center justify-center">
-                    P
-                  </div>
-                )}
-              </div>
-
-              {/* Mobile Dropdown Menu */}
-              {isProfileMenuOpen && (
-                <div className="mt-2 space-y-2">
+            <div className="mt-2 space-y-2 z-10">
+                <a
+                    onClick={handleDashboardClick}
+                    className="block bg-white text-blue-500 border-2 border-blue-500 px-4 py-2 rounded-lg cursor-pointer text-center"
+                  >
+                    Dashboard
+                  </a>
                   <a
                     onClick={handleProfileClick}
-                    className="block text-left bg-white text-blue-500 border-2 border-blue-500 px-4 py-2 rounded-lg cursor-pointer"
+                    className="block text-center bg-white text-blue-500 border-2 border-blue-500 px-4 py-2 rounded-lg cursor-pointer"
                   >
                     Profile
                   </a>
                   <a
                     onClick={handleLogoutClick}
-                    className="block text-left bg-white text-blue-500 border-2 border-blue-500 px-4 py-2 rounded-lg cursor-pointer"
+                    className="block text-center bg-white text-blue-500 border-2 border-blue-500 px-4 py-2 rounded-lg cursor-pointer"
                   >
                     Logout
                   </a>
                 </div>
-              )}
-            </div>
           )}
         </div>
       )}

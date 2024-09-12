@@ -131,7 +131,7 @@ export default function PatientDashboard() {
   );
 
   return (
-    <Box sx={{ maxWidth: 800, margin: "auto", mt: 4, px: 2 }}>
+    <Box sx={{ maxWidth: { xs: "100%", sm: 800 }, margin: "auto", mt: 4, px: 2 }}>
       <Typography variant="h4" gutterBottom sx={{ color: 'primary.main' }}>
         Your Consultations
       </Typography>
